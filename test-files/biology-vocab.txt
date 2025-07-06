@@ -1,0 +1,93 @@
+Biology Vocabulary for Study
+
+Cell Structure and Function
+
+Cell: The basic unit of life. All living organisms are composed of one or more cells.
+
+Cell Membrane: A thin, flexible barrier that surrounds the cell and controls what enters and exits the cell. Also called the plasma membrane.
+
+Nucleus: The control center of the cell that contains DNA and regulates gene expression and cell reproduction.
+
+Cytoplasm: The gel-like substance inside the cell membrane that contains organelles and is the site of many cellular processes.
+
+Mitochondria: The powerhouse of the cell where cellular respiration occurs and ATP (energy) is produced.
+
+Ribosomes: Small structures responsible for protein synthesis. They can be free-floating in the cytoplasm or attached to the endoplasmic reticulum.
+
+Endoplasmic Reticulum (ER): A network of membranes involved in protein and lipid synthesis. Rough ER has ribosomes; smooth ER does not.
+
+Golgi Apparatus: The shipping and receiving center of the cell that modifies, packages, and ships proteins from the ER.
+
+Lysosomes: Organelles containing digestive enzymes that break down waste materials, cellular debris, and foreign substances.
+
+Chloroplasts: Organelles found in plant cells where photosynthesis occurs, containing chlorophyll that captures light energy.
+
+Cell Wall: A rigid structure surrounding plant cells that provides support and protection, made primarily of cellulose.
+
+Vacuole: A large storage organelle in plant cells that maintains turgor pressure and stores water, ions, and nutrients.
+
+Genetics and DNA
+
+DNA: Deoxyribonucleic acid, the hereditary material that contains genetic instructions for all living organisms.
+
+Gene: A specific segment of DNA that codes for a particular trait or protein.
+
+Chromosome: A structure containing DNA and proteins, found in the nucleus of cells.
+
+Allele: Different versions of the same gene that can result in different traits.
+
+Genotype: The genetic makeup of an organism, represented by letters (e.g., AA, Aa, aa).
+
+Phenotype: The observable characteristics or traits of an organism resulting from its genotype and environment.
+
+Dominant: An allele that is expressed when present, typically represented by a capital letter.
+
+Recessive: An allele that is only expressed when two copies are present, typically represented by a lowercase letter.
+
+Heredity: The passing of traits from parents to offspring through genes.
+
+Mutation: A change in the DNA sequence that can result in altered traits.
+
+Ecology and Environment
+
+Ecosystem: A community of living organisms interacting with their physical environment.
+
+Producer: An organism that makes its own food through photosynthesis or chemosynthesis, also called autotrophs.
+
+Consumer: An organism that obtains energy by eating other organisms, also called heterotrophs.
+
+Decomposer: An organism that breaks down dead material and waste products, recycling nutrients back to the environment.
+
+Food Chain: A linear sequence showing how energy and nutrients pass from one organism to another.
+
+Food Web: A complex network of interconnected food chains in an ecosystem.
+
+Habitat: The natural environment where an organism lives and meets its needs.
+
+Niche: The role an organism plays in its environment, including its habitat, diet, and behavior.
+
+Biodiversity: The variety of life in an ecosystem, including species diversity, genetic diversity, and ecosystem diversity.
+
+Symbiosis: A close relationship between two different species, which can be mutualistic, commensalistic, or parasitic.
+
+Evolution and Natural Selection
+
+Evolution: The change in heritable traits of biological populations over successive generations.
+
+Natural Selection: The process by which organisms with favorable traits are more likely to survive and reproduce.
+
+Adaptation: A trait that helps an organism survive and reproduce in its environment.
+
+Speciation: The formation of new species through evolutionary processes.
+
+Fossil: Preserved remains or traces of ancient organisms that provide evidence of evolution.
+
+Homologous Structures: Body parts in different species that have similar structure but may have different functions, indicating common ancestry.
+
+Analogous Structures: Body parts in different species that have similar functions but different structures, indicating convergent evolution.
+
+Reproductive Success: The ability of an organism to survive and produce viable offspring.
+
+Genetic Drift: Random changes in allele frequencies in a population over time.
+
+Gene Pool: The total collection of genes and alleles in a population.

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Flashcard Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Auth Section -->
+        <div id="auth-section" class="section">
+            <div class="container">
+                <h1>AI Flashcard Generator</h1>
+                <div class="auth-forms">
+                    <div class="form-container">
+                        <h2>Login</h2>
+                        <form id="login-form">
+                            <input type="email" id="login-email" placeholder="Email" required>
+                            <input type="password" id="login-password" placeholder="Password" required>
+                            <button type="submit">Login</button>
+                        </form>
+                    </div>
+                    <div class="form-container">
+                        <h2>Register</h2>
+                        <form id="register-form">
+                            <input type="email" id="register-email" placeholder="Email" required>
+                            <input type="password" id="register-password" placeholder="Password" required>
+                            <button type="submit">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="section hidden">
+            <div class="container">
+                <header>
+                    <h1>My Flashcard Decks</h1>
+                    <div class="header-actions">
+                        <button id="create-deck-btn" class="btn-primary">Create New Deck</button>
+                        <button id="logout-btn" class="btn-secondary">Logout</button>
+                    </div>
+                </header>
+                
+                <div id="decks-container">
+                    <!-- Decks will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Deck Section -->
+        <div id="create-deck-section" class="section hidden">
+            <div class="container">
+                <h2>Create New Deck</h2>
+                <div class="create-options">
+                    <div class="option-card" id="upload-option">
+                        <h3>Upload File</h3>
+                        <p>Upload a PDF or text file to generate flashcards</p>
+                    </div>
+                    <div class="option-card" id="text-option">
+                        <h3>Paste Text</h3>
+                        <p>Paste or type content to generate flashcards</p>
+                    </div>
+                </div>
+
+                <!-- File Upload Form -->
+                <div id="upload-form" class="create-form hidden">
+                    <form id="file-upload-form">
+                        <input type="text" id="deck-name" placeholder="Deck Name" required>
+                        <input type="text" id="deck-description" placeholder="Description (optional)">
+                        <input type="file" id="file-input" accept=".pdf,.txt" required>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Generate Flashcards</button>
+                            <button type="button" id="cancel-upload" class="btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Text Input Form -->
+                <div id="text-form" class="create-form hidden">
+                    <form id="text-input-form">
+                        <input type="text" id="text-deck-name" placeholder="Deck Name" required>
+                        <input type="text" id="text-deck-description" placeholder="Description (optional)">
+                        <textarea id="content-input" placeholder="Paste your content here..." rows="10" required></textarea>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Generate Flashcards</button>
+                            <button type="button" id="cancel-text" class="btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Section -->
+        <div id="study-section" class="section hidden">
+            <div class="container">
+                <div class="study-header">
+                    <h2 id="study-deck-name">Studying: Deck Name</h2>
+                    <button id="back-to-dashboard" class="btn-secondary">Back to Dashboard</button>
+                </div>
+                
+                <div id="study-card" class="flashcard">
+                    <div class="card-content">
+                        <div id="question-side" class="card-side">
+                            <h3>Question</h3>
+                            <p id="question-text"></p>
+                            <button id="show-answer-btn" class="btn-primary">Show Answer</button>
+                        </div>
+                        
+                        <div id="answer-side" class="card-side hidden">
+                            <h3>Correct Answer</h3>
+                            <p id="answer-text"></p>
+                            
+                            <div class="answer-input">
+                                <textarea id="user-answer" placeholder="Type your answer..." rows="4"></textarea>
+                                <button id="submit-answer-btn" class="btn-primary">Submit Answer</button>
+                            </div>
+                        </div>
+                        
+                        <div id="result-side" class="card-side hidden">
+                            <h3>Result</h3>
+                            <div id="score-display"></div>
+                            <div id="feedback-display"></div>
+                            <button id="next-card-btn" class="btn-primary">Next Card</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="no-cards-message" class="message hidden">
+                    <h3>No cards to study right now!</h3>
+                    <p>Come back later for spaced repetition review.</p>
+                    <button id="back-from-empty" class="btn-primary">Back to Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

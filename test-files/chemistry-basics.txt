@@ -1,0 +1,93 @@
+Chemistry Fundamentals
+
+Atomic Structure
+
+Atom: The smallest unit of matter that retains the properties of an element.
+
+Proton: A positively charged particle found in the nucleus of an atom.
+
+Neutron: A neutral particle (no charge) found in the nucleus of an atom.
+
+Electron: A negatively charged particle that orbits the nucleus in electron shells.
+
+Atomic Number: The number of protons in an atom's nucleus, which determines the element.
+
+Mass Number: The total number of protons and neutrons in an atom's nucleus.
+
+Isotope: Atoms of the same element with different numbers of neutrons.
+
+Ion: An atom or molecule with a net electric charge due to loss or gain of electrons.
+
+Chemical Bonding
+
+Covalent Bond: A chemical bond formed by sharing electrons between atoms.
+
+Ionic Bond: A chemical bond formed by the transfer of electrons from one atom to another.
+
+Metallic Bond: A chemical bond found in metals where electrons are delocalized.
+
+Hydrogen Bond: A weak attraction between a hydrogen atom and an electronegative atom.
+
+Polar Molecule: A molecule with an uneven distribution of electron density.
+
+Nonpolar Molecule: A molecule with an even distribution of electron density.
+
+Electronegativity: The ability of an atom to attract electrons in a chemical bond.
+
+Chemical Reactions
+
+Reactant: A substance that participates in a chemical reaction.
+
+Product: A substance formed as a result of a chemical reaction.
+
+Catalyst: A substance that speeds up a chemical reaction without being consumed.
+
+Activation Energy: The minimum energy required to start a chemical reaction.
+
+Exothermic Reaction: A reaction that releases energy, usually in the form of heat.
+
+Endothermic Reaction: A reaction that absorbs energy from the surroundings.
+
+Combustion: A chemical reaction involving oxygen that produces heat and light.
+
+Synthesis Reaction: A reaction where two or more substances combine to form one product.
+
+Decomposition Reaction: A reaction where one compound breaks down into simpler substances.
+
+States of Matter
+
+Solid: A state of matter with definite shape and volume due to strong intermolecular forces.
+
+Liquid: A state of matter with definite volume but no definite shape.
+
+Gas: A state of matter with no definite shape or volume.
+
+Plasma: A state of matter consisting of ionized gas with free electrons and ions.
+
+Melting Point: The temperature at which a solid becomes a liquid.
+
+Boiling Point: The temperature at which a liquid becomes a gas.
+
+Sublimation: The direct transition from solid to gas without passing through liquid phase.
+
+Condensation: The change from gas to liquid state.
+
+Solutions and Mixtures
+
+Solution: A homogeneous mixture of two or more substances.
+
+Solvent: The substance present in the largest amount in a solution.
+
+Solute: The substance dissolved in a solvent.
+
+Concentration: The amount of solute dissolved in a given amount of solvent.
+
+Molarity: The number of moles of solute per liter of solution.
+
+pH: A scale measuring the acidity or basicity of a solution.
+
+Acid: A substance that donates hydrogen ions (H+) in solution.
+
+Base: A substance that accepts hydrogen ions or donates hydroxide ions (OH-).
+
+Buffer: A solution that resists changes in pH when small amounts of acid or base are added.

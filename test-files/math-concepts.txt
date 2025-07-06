@@ -1,0 +1,87 @@
+Mathematics Fundamentals
+
+Algebra
+
+Variable: A symbol (usually a letter) that represents an unknown value in an equation.
+
+Coefficient: A number that multiplies a variable in an algebraic expression.
+
+Constant: A fixed value that does not change in an equation or expression.
+
+Linear Equation: An equation where the highest power of the variable is 1.
+
+Quadratic Equation: An equation where the highest power of the variable is 2.
+
+Polynomial: An expression consisting of variables and coefficients using addition, subtraction, and multiplication.
+
+Factor: A number or expression that divides another number or expression evenly.
+
+Slope: The measure of steepness of a line, calculated as rise over run.
+
+Y-intercept: The point where a line crosses the y-axis.
+
+System of Equations: A set of two or more equations with the same variables.
+
+Geometry
+
+Point: A location in space with no dimension, represented by a dot.
+
+Line: A straight path extending infinitely in both directions.
+
+Ray: A part of a line that starts at one point and extends infinitely in one direction.
+
+Line Segment: A part of a line bounded by two endpoints.
+
+Angle: The space between two intersecting lines or rays, measured in degrees.
+
+Perpendicular: Lines that intersect at a 90-degree angle.
+
+Parallel: Lines that never intersect and are always the same distance apart.
+
+Triangle: A polygon with three sides and three angles.
+
+Quadrilateral: A polygon with four sides and four angles.
+
+Circle: A round shape where all points are equidistant from the center.
+
+Circumference: The distance around the outside of a circle.
+
+Area: The amount of space inside a two-dimensional shape.
+
+Perimeter: The distance around the outside of a polygon.
+
+Volume: The amount of space inside a three-dimensional object.
+
+Trigonometry
+
+Sine: The ratio of the opposite side to the hypotenuse in a right triangle.
+
+Cosine: The ratio of the adjacent side to the hypotenuse in a right triangle.
+
+Tangent: The ratio of the opposite side to the adjacent side in a right triangle.
+
+Hypotenuse: The longest side of a right triangle, opposite the right angle.
+
+Pythagorean Theorem: In a right triangle, a² + b² = c², where c is the hypotenuse.
+
+Statistics and Probability
+
+Mean: The average of a set of numbers, calculated by adding all values and dividing by the count.
+
+Median: The middle value in a sorted list of numbers.
+
+Mode: The value that appears most frequently in a data set.
+
+Range: The difference between the highest and lowest values in a data set.
+
+Standard Deviation: A measure of how spread out the values in a data set are.
+
+Probability: The likelihood of an event occurring, expressed as a fraction or percentage.
+
+Sample: A subset of a population used to make inferences about the whole population.
+
+Population: The entire group being studied in a statistical analysis.
+
+Correlation: A statistical relationship between two variables.
+
+Regression: A statistical method for modeling the relationship between variables.
