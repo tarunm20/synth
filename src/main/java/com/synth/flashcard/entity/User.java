@@ -17,6 +17,10 @@ import java.util.List;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
     
+    public enum SubscriptionTier {
+        FREE, BASIC, PRO
+    }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,6 +36,10 @@ public class User implements UserDetails {
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "subscription_tier")
+    private SubscriptionTier subscriptionTier = SubscriptionTier.FREE;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -131,5 +139,13 @@ public class User implements UserDetails {
     
     public void setStudySessions(List<StudySession> studySessions) {
         this.studySessions = studySessions;
+    }
+    
+    public SubscriptionTier getSubscriptionTier() {
+        return subscriptionTier;
+    }
+    
+    public void setSubscriptionTier(SubscriptionTier subscriptionTier) {
+        this.subscriptionTier = subscriptionTier;
     }
 }

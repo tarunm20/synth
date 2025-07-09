@@ -7,9 +7,11 @@ import com.synth.flashcard.entity.StudySession;
 import com.synth.flashcard.entity.User;
 import com.synth.flashcard.repository.CardRepository;
 import com.synth.flashcard.repository.DeckRepository;
+import com.synth.flashcard.repository.StudyProgressRepository;
 import com.synth.flashcard.repository.StudySessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -25,6 +27,9 @@ public class FlashcardService {
 
     @Autowired
     private ClaudeService claudeService;
+    
+    @Autowired
+    private GeminiService geminiService;
 
     @Autowired
     private DeckRepository deckRepository;
@@ -34,6 +39,12 @@ public class FlashcardService {
 
     @Autowired
     private StudySessionRepository studySessionRepository;
+    
+    @Autowired
+    private StudyProgressRepository studyProgressRepository;
+    
+    @Autowired
+    private SubscriptionService subscriptionService;
 
     public Deck createDeckFromFile(User user, String deckName, String description, MultipartFile file) throws IOException {
         // Validate file
@@ -52,19 +63,22 @@ public class FlashcardService {
             throw new IllegalArgumentException("No text content found in the file.");
         }
 
-        // Generate flashcards using Claude
-        List<ClaudeService.FlashcardData> flashcardData = claudeService.generateFlashcards(content);
+        // Generate flashcards using Gemini (switched from Claude for cost efficiency)
+        List<GeminiService.FlashcardData> flashcardData = geminiService.generateFlashcards(content);
         
         if (flashcardData.isEmpty()) {
             throw new RuntimeException("Failed to generate flashcards from the content.");
         }
+        
+        // Validate subscription limits before creating deck
+        subscriptionService.validateDeckCreation(user, flashcardData.size());
 
         // Create deck
         Deck deck = new Deck(user, deckName, description);
         deck = deckRepository.save(deck);
 
         // Create cards
-        for (ClaudeService.FlashcardData data : flashcardData) {
+        for (GeminiService.FlashcardData data : flashcardData) {
             Card card = new Card(deck, data.getQuestion(), data.getAnswer(), Card.Difficulty.MEDIUM);
             cardRepository.save(card);
         }
@@ -77,19 +91,22 @@ public class FlashcardService {
             throw new IllegalArgumentException("Content cannot be empty.");
         }
 
-        // Generate flashcards using Claude
-        List<ClaudeService.FlashcardData> flashcardData = claudeService.generateFlashcards(content);
+        // Generate flashcards using Gemini (switched from Claude for cost efficiency)
+        List<GeminiService.FlashcardData> flashcardData = geminiService.generateFlashcards(content);
         
         if (flashcardData.isEmpty()) {
             throw new RuntimeException("Failed to generate flashcards from the content.");
         }
+        
+        // Validate subscription limits before creating deck
+        subscriptionService.validateDeckCreation(user, flashcardData.size());
 
         // Create deck
         Deck deck = new Deck(user, deckName, description);
         deck = deckRepository.save(deck);
 
         // Create cards
-        for (ClaudeService.FlashcardData data : flashcardData) {
+        for (GeminiService.FlashcardData data : flashcardData) {
             Card card = new Card(deck, data.getQuestion(), data.getAnswer(), Card.Difficulty.MEDIUM);
             cardRepository.save(card);
         }
@@ -112,8 +129,22 @@ public class FlashcardService {
         return deck;
     }
 
+    @Transactional
     public void deleteDeck(Long deckId, Long userId) {
         Deck deck = getDeck(deckId, userId); // This checks ownership
+        
+        // Delete related records first to avoid foreign key constraint violations
+        
+        // 1. Delete study sessions for all cards in this deck
+        List<Long> cardIds = deck.getCards().stream().map(Card::getId).toList();
+        if (!cardIds.isEmpty()) {
+            studySessionRepository.deleteByCardIdIn(cardIds);
+        }
+        
+        // 2. Delete study progress records for this deck
+        studyProgressRepository.deleteByDeckId(deckId);
+        
+        // 3. Now safe to delete the deck (cards will be deleted via cascade)
         deckRepository.delete(deck);
     }
 

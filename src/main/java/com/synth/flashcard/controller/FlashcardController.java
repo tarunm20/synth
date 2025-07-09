@@ -4,6 +4,7 @@ import com.synth.flashcard.dto.DeckStatsDto;
 import com.synth.flashcard.entity.Deck;
 import com.synth.flashcard.entity.User;
 import com.synth.flashcard.service.FlashcardService;
+import com.synth.flashcard.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -59,10 +60,32 @@ public class FlashcardController {
             System.err.println("IO Error: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Error processing file: " + e.getMessage());
+        } catch (SubscriptionService.SubscriptionLimitException e) {
+            System.err.println("Subscription Limit Error: " + e.getMessage());
+            return ResponseEntity.status(402).body(Map.of(
+                "error", "SUBSCRIPTION_LIMIT_EXCEEDED",
+                "message", e.getMessage(),
+                "upgradeRequired", true
+            ));
         } catch (Exception e) {
             System.err.println("General Error: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
+            
+            // Provide user-friendly error messages
+            String errorMessage = e.getMessage();
+            if (errorMessage != null && errorMessage.contains("overloaded")) {
+                return ResponseEntity.status(503).body(Map.of(
+                    "error", "SERVICE_TEMPORARILY_UNAVAILABLE",
+                    "message", "AI service is temporarily overloaded. Please try again in a few minutes.",
+                    "retryAfter", 300 // 5 minutes
+                ));
+            }
+            
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "DECK_CREATION_FAILED",
+                "message", "Failed to create deck. Please try again.",
+                "details", errorMessage
+            ));
         }
     }
 
@@ -92,8 +115,31 @@ public class FlashcardController {
             );
             
             return ResponseEntity.ok(response);
+        } catch (SubscriptionService.SubscriptionLimitException e) {
+            return ResponseEntity.status(402).body(Map.of(
+                "error", "SUBSCRIPTION_LIMIT_EXCEEDED",
+                "message", e.getMessage(),
+                "upgradeRequired", true
+            ));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            System.err.println("General Error: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Provide user-friendly error messages
+            String errorMessage = e.getMessage();
+            if (errorMessage != null && errorMessage.contains("overloaded")) {
+                return ResponseEntity.status(503).body(Map.of(
+                    "error", "SERVICE_TEMPORARILY_UNAVAILABLE",
+                    "message", "AI service is temporarily overloaded. Please try again in a few minutes.",
+                    "retryAfter", 300 // 5 minutes
+                ));
+            }
+            
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "DECK_CREATION_FAILED",
+                "message", "Failed to create deck. Please try again.",
+                "details", errorMessage
+            ));
         }
     }
 

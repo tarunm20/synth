@@ -20,6 +20,9 @@ public class StudyService {
 
     @Autowired
     private ClaudeService claudeService;
+    
+    @Autowired
+    private GeminiService geminiService;
 
     @Autowired
     private SpacedRepetitionService spacedRepetitionService;
@@ -40,8 +43,8 @@ public class StudyService {
     private UserRepository userRepository;
 
     public StudySession submitAnswer(User user, Card card, String userAnswer) {
-        // Use Claude to grade the answer
-        ClaudeService.GradingResult gradingResult = claudeService.gradeAnswer(
+        // Use Gemini to grade the answer (switched from Claude for cost efficiency)
+        GeminiService.GradingResult gradingResult = geminiService.gradeAnswer(
             card.getQuestion(),
             card.getAnswer(),
             userAnswer

@@ -96,3 +96,10 @@ export const studyApi = {
   getActiveProgress: () => api.get<StudyProgress[]>('/study/progress'),
   clearProgress: (deckId: number) => api.delete(`/study/progress/${deckId}`),
 }
+
+export const subscriptionApi = {
+  getStatus: () => api.get('/subscription/status'),
+  getPricing: () => api.get('/subscription/pricing'),
+  upgrade: (tier: string) => api.post('/subscription/upgrade', { tier }),
+  canCreateDeck: () => api.get('/subscription/can-create-deck'),
+}

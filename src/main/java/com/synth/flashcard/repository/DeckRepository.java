@@ -10,4 +10,5 @@ import java.util.List;
 public interface DeckRepository extends JpaRepository<Deck, Long> {
     List<Deck> findByUserIdOrderByCreatedAtDesc(Long userId);
     List<Deck> findAllByOrderByCreatedAtDesc();
+    int countByUserId(Long userId);
 }

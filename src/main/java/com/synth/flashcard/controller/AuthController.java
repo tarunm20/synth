@@ -95,4 +95,43 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Failed to reset password");
         }
     }
+
+    @PostMapping("/create-test-users")
+    public ResponseEntity<?> createTestUsers() {
+        try {
+            // Create FREE tier user
+            if (!userRepository.existsByEmail("free@test.com")) {
+                User freeUser = new User();
+                freeUser.setEmail("free@test.com");
+                freeUser.setPassword(passwordEncoder.encode("password123"));
+                freeUser.setSubscriptionTier(User.SubscriptionTier.FREE);
+                userRepository.save(freeUser);
+            }
+
+            // Create BASIC tier user
+            if (!userRepository.existsByEmail("basic@test.com")) {
+                User basicUser = new User();
+                basicUser.setEmail("basic@test.com");
+                basicUser.setPassword(passwordEncoder.encode("password123"));
+                basicUser.setSubscriptionTier(User.SubscriptionTier.BASIC);
+                userRepository.save(basicUser);
+            }
+
+            // Create PRO tier user
+            if (!userRepository.existsByEmail("pro@test.com")) {
+                User proUser = new User();
+                proUser.setEmail("pro@test.com");
+                proUser.setPassword(passwordEncoder.encode("password123"));
+                proUser.setSubscriptionTier(User.SubscriptionTier.PRO);
+                userRepository.save(proUser);
+            }
+
+            return ResponseEntity.ok().body("Test users created successfully:\n" +
+                "FREE tier: free@test.com / password123 (3 decks, 50 cards per deck)\n" +
+                "BASIC tier: basic@test.com / password123 (10 decks, unlimited cards)\n" +
+                "PRO tier: pro@test.com / password123 (unlimited decks and cards)");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to create test users: " + e.getMessage());
+        }
+    }
 }

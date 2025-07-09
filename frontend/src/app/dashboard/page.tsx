@@ -2,14 +2,33 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
-import { deckApi, studyApi, DeckStats, StudyProgress } from '@/lib/api'
-import { Plus, BookOpen, Target, TrendingUp, LogOut, Play, RotateCcw } from 'lucide-react'
+import { deckApi, studyApi, subscriptionApi, DeckStats, StudyProgress } from '@/lib/api'
+import { Plus, BookOpen, Target, TrendingUp, LogOut, Play, RotateCcw, Settings, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DeleteDeckDialog } from '@/components/delete-deck-dialog'
+import { SubscriptionLimitDialog } from '@/components/subscription-limit-dialog'
+import { useToast } from '@/hooks/use-toast'
+import { motion } from 'framer-motion'
 
 export default function DashboardPage() {
   const { user, logout, loading: authLoading } = useAuth()
+  const { toast } = useToast()
   const [decks, setDecks] = useState<DeckStats[]>([])
   const [activeProgress, setActiveProgress] = useState<StudyProgress[]>([])
   const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState<number | null>(null)
+  const [limitDialog, setLimitDialog] = useState<{
+    isOpen: boolean
+    currentTier: string
+    maxDecks: number
+    message: string
+  }>({
+    isOpen: false,
+    currentTier: '',
+    maxDecks: 0,
+    message: ''
+  })
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -45,6 +64,54 @@ export default function DashboardPage() {
       setActiveProgress(prev => prev.filter(p => p.deck.id !== deckId))
     } catch (error) {
       console.error('Failed to clear progress:', error)
+    }
+  }
+
+  const handleDeleteDeck = async (deckId: number) => {
+    setDeleting(deckId)
+    try {
+      await deckApi.deleteDeck(deckId)
+      setDecks(prev => prev.filter(deck => deck.id !== deckId))
+      setActiveProgress(prev => prev.filter(p => p.deck.id !== deckId))
+      
+      toast({
+        title: "Deck deleted",
+        description: "The flashcard deck has been permanently deleted.",
+        variant: "destructive",
+      })
+    } catch (error) {
+      console.error('Failed to delete deck:', error)
+      toast({
+        title: "Error",
+        description: "Failed to delete deck. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setDeleting(null)
+    }
+  }
+
+  const handleNewDeck = async () => {
+    try {
+      const response = await subscriptionApi.canCreateDeck()
+      const data = response.data
+      
+      if (data.canCreate) {
+        // User can create a deck, redirect to upload page
+        window.location.href = '/upload'
+      } else {
+        // Show subscription limit dialog
+        setLimitDialog({
+          isOpen: true,
+          currentTier: data.currentTier || 'FREE',
+          maxDecks: data.maxDecks || 3,
+          message: data.message || 'You have reached your deck limit.'
+        })
+      }
+    } catch (error) {
+      console.error('Failed to check subscription limits:', error)
+      // If API fails, still allow deck creation (fail open)
+      window.location.href = '/upload'
     }
   }
 
@@ -84,13 +151,22 @@ export default function DashboardPage() {
               <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
               <p className="text-gray-600">{user.email}</p>
             </div>
-            <button
-              onClick={logout}
-              className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
-            >
-              <LogOut size={20} className="mr-2" />
-              Logout
-            </button>
+            <div className="flex items-center space-x-3">
+              <a
+                href="/settings"
+                className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                <Settings size={20} className="mr-2" />
+                Settings
+              </a>
+              <button
+                onClick={logout}
+                className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                <LogOut size={20} className="mr-2" />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -98,55 +174,113 @@ export default function DashboardPage() {
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="flex items-center">
-              <BookOpen className="text-blue-600 mr-3" size={24} />
-              <div>
-                <p className="text-2xl font-bold text-gray-900">{decks.length}</p>
-                <p className="text-gray-600">Total Decks</p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="p-6">
+              <div className="flex items-center">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="text-blue-600 mr-3"
+                >
+                  <BookOpen size={24} />
+                </motion.div>
+                <div>
+                  <motion.p 
+                    className="text-2xl font-bold text-gray-900"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.3, type: "spring" }}
+                  >
+                    {decks.length}
+                  </motion.p>
+                  <p className="text-gray-600">Total Decks</p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="flex items-center">
-              <Target className="text-green-600 mr-3" size={24} />
-              <div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {decks.reduce((sum, deck) => sum + deck.cardCount, 0)}
-                </p>
-                <p className="text-gray-600">Total Cards</p>
+            </Card>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="p-6">
+              <div className="flex items-center">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="text-green-600 mr-3"
+                >
+                  <Target size={24} />
+                </motion.div>
+                <div>
+                  <motion.p 
+                    className="text-2xl font-bold text-gray-900"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.4, type: "spring" }}
+                  >
+                    {decks.reduce((sum, deck) => sum + deck.cardCount, 0)}
+                  </motion.p>
+                  <p className="text-gray-600">Total Cards</p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="flex items-center">
-              <TrendingUp className="text-purple-600 mr-3" size={24} />
-              <div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {decks.length > 0 
-                    ? Math.round(decks.reduce((sum, deck) => sum + deck.masteryScore, 0) / decks.length)
-                    : 0}%
-                </p>
-                <p className="text-gray-600">Avg Mastery</p>
+            </Card>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="p-6">
+              <div className="flex items-center">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="text-purple-600 mr-3"
+                >
+                  <TrendingUp size={24} />
+                </motion.div>
+                <div>
+                  <motion.p 
+                    className="text-2xl font-bold text-gray-900"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.5, type: "spring" }}
+                  >
+                    {decks.length > 0 
+                      ? Math.round(decks.reduce((sum, deck) => sum + deck.masteryScore, 0) / decks.length)
+                      : 0}%
+                  </motion.p>
+                  <p className="text-gray-600">Avg Mastery</p>
+                </div>
               </div>
-            </div>
-          </div>
+            </Card>
+          </motion.div>
         </div>
 
         {/* Resume Study Section */}
         {activeProgress.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm mb-8">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Continue Studying</h2>
-              <p className="text-gray-600">Pick up where you left off</p>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {activeProgress.map((progress) => (
-                  <div
-                    key={progress.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                  >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="text-xl">Continue Studying</CardTitle>
+                <CardDescription>Pick up where you left off</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {activeProgress.map((progress, index) => (
+                    <motion.div
+                      key={progress.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.5 + index * 0.1 }}
+                    >
+                      <Card className="p-4">
                     <h3 className="font-medium text-gray-900 mb-2">{progress.deck.name}</h3>
                     <div className="mb-3">
                       <div className="flex justify-between text-sm text-gray-600 mb-1">
@@ -163,63 +297,80 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex space-x-2">
-                      <a
-                        href={`/study/${progress.deck.id}?resume=true`}
-                        className="flex-1 bg-blue-600 text-white text-center py-2 px-3 rounded text-sm hover:bg-blue-700 transition-colors flex items-center justify-center"
-                      >
-                        <Play size={16} className="mr-1" />
-                        Resume
-                      </a>
-                      <button
-                        onClick={() => handleClearProgress(progress.deck.id)}
-                        className="bg-gray-200 text-gray-700 px-3 py-2 rounded text-sm hover:bg-gray-300 transition-colors flex items-center"
-                      >
-                        <RotateCcw size={16} />
-                      </button>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+                        <Button asChild size="sm" className="w-full">
+                          <a href={`/study/${progress.deck.id}?resume=true`} className="flex items-center justify-center">
+                            <Play size={16} className="mr-1" />
+                            Resume
+                          </a>
+                        </Button>
+                      </motion.div>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleClearProgress(progress.deck.id)}
+                          className="px-3"
+                        >
+                          <RotateCcw size={16} />
+                        </Button>
+                      </motion.div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         )}
 
         {/* Decks Section */}
-        <div className="bg-white rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold text-gray-900">Your Flashcard Decks</h2>
-              <a
-                href="/upload"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-              >
-                <Plus size={20} className="mr-2" />
-                New Deck
-              </a>
-            </div>
-          </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle className="text-xl">Your Flashcard Decks</CardTitle>
+                </div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button onClick={handleNewDeck}>
+                    <Plus size={20} className="mr-2" />
+                    New Deck
+                  </Button>
+                </motion.div>
+              </div>
+            </CardHeader>
 
-          <div className="p-6">
+            <CardContent>
             {decks.length === 0 ? (
               <div className="text-center py-12">
                 <BookOpen size={48} className="mx-auto text-gray-400 mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No flashcard decks yet</h3>
                 <p className="text-gray-600 mb-6">Create your first deck to start studying</p>
-                <a
-                  href="/upload"
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center"
-                >
-                  <Plus size={20} className="mr-2" />
-                  Create Your First Deck
-                </a>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button asChild size="lg">
+                    <a href="/upload" className="inline-flex items-center">
+                      <Plus size={20} className="mr-2" />
+                      Create Your First Deck
+                    </a>
+                  </Button>
+                </motion.div>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {decks.map((deck) => (
-                  <div
+                  <motion.div
                     key={deck.id}
-                    className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: deck.id * 0.1 }}
                   >
+                    <Card className="h-full p-6">
                     <div className="mb-4">
                       <h3 className="text-lg font-medium text-gray-900 mb-2">{deck.name}</h3>
                       {deck.description && (
@@ -246,20 +397,38 @@ export default function DashboardPage() {
 
                     {/* Actions */}
                     <div className="flex space-x-2">
-                      <a
-                        href={`/study/${deck.id}`}
-                        className="flex-1 bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 transition-colors"
-                      >
-                        Study
-                      </a>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+                        <Button asChild className="w-full">
+                          <a href={`/study/${deck.id}`}>
+                            Study
+                          </a>
+                        </Button>
+                      </motion.div>
+                      <DeleteDeckDialog
+                        deckName={deck.name}
+                        cardCount={deck.cardCount}
+                        isDeleting={deleting === deck.id}
+                        onDelete={() => handleDeleteDeck(deck.id)}
+                      />
                     </div>
-                  </div>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
             )}
-          </div>
-        </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
+
+      {/* Subscription Limit Dialog */}
+      <SubscriptionLimitDialog
+        isOpen={limitDialog.isOpen}
+        onClose={() => setLimitDialog(prev => ({ ...prev, isOpen: false }))}
+        currentTier={limitDialog.currentTier}
+        maxDecks={limitDialog.maxDecks}
+        message={limitDialog.message}
+      />
     </div>
   )
 }
