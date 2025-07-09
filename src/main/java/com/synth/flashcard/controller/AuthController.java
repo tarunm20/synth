@@ -8,6 +8,7 @@ import com.synth.flashcard.dto.PasswordResetRequest;
 import com.synth.flashcard.entity.User;
 import com.synth.flashcard.repository.UserRepository;
 import com.synth.flashcard.service.PasswordResetService;
+import com.synth.flashcard.service.EmailConfirmationService;
 import com.synth.flashcard.util.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class AuthController {
     @Autowired
     private PasswordResetService passwordResetService;
 
+    @Autowired
+    private EmailConfirmationService emailConfirmationService;
+
     @PostMapping("/register")
     @RateLimit(limit = 5, window = 300) // 5 registrations per 5 minutes
     public ResponseEntity<?> register(@Valid @RequestBody AuthRequest request) {
@@ -49,6 +53,9 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         
         user = userRepository.save(user);
+        
+        // Send email confirmation
+        emailConfirmationService.sendEmailConfirmation(user);
         
         String token = jwtUtil.generateToken(user);
         
@@ -93,6 +100,36 @@ public class AuthController {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to reset password");
+        }
+    }
+
+    @PostMapping("/confirm-email")
+    @RateLimit(limit = 5, window = 300) // 5 attempts per 5 minutes
+    public ResponseEntity<?> confirmEmail(@RequestParam String token) {
+        try {
+            boolean success = emailConfirmationService.confirmEmail(token);
+            if (success) {
+                return ResponseEntity.ok().body("Email confirmed successfully");
+            } else {
+                return ResponseEntity.badRequest().body("Invalid or expired token");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to confirm email");
+        }
+    }
+
+    @PostMapping("/resend-confirmation")
+    @RateLimit(limit = 3, window = 300) // 3 attempts per 5 minutes
+    public ResponseEntity<?> resendConfirmation(@Valid @RequestBody PasswordResetRequest request) {
+        try {
+            boolean success = emailConfirmationService.resendEmailConfirmation(request.getEmail());
+            if (success) {
+                return ResponseEntity.ok().body("Confirmation email sent");
+            } else {
+                return ResponseEntity.ok().body("Email already confirmed or confirmation already pending");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.ok().body("Confirmation email sent if email exists");
         }
     }
 

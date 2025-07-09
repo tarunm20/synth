@@ -35,8 +35,13 @@ DB_PASSWORD=your_super_secure_database_password
 # Secure JWT secret (32+ characters)
 JWT_SECRET=your_super_secure_jwt_secret_must_be_32_plus_characters
 
-# Your Google Gemini API key
+# Your Gemini API key
 GEMINI_API_KEY=your_gemini_api_key_here
+
+# Email configuration (Resend)
+RESEND_API_KEY=your_resend_api_key_here
+RESEND_FROM_EMAIL=noreply@yourdomain.com
+FRONTEND_URL=https://yourdomain.com
 ```
 
 ### 2. Deploy

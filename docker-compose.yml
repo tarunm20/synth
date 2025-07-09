@@ -49,6 +49,9 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      RESEND_API_KEY: ${RESEND_API_KEY:-re_T9VNkF49_PT6i9wiu54JMWb6XKuHeU7Yz}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-noreply@yourdomain.com}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
     env_file:
       - .env
     depends_on:

@@ -8,6 +8,8 @@
 **Features:**
 - User registration with email and password
 - Secure login with JWT token generation
+- Email confirmation system with secure tokens
+- Password reset functionality via email
 - Protected routes and API endpoints
 - User session management with authentication context
 
@@ -16,15 +18,22 @@
 - **Frontend**: React Context API for auth state management
 - **Database**: User entities with encrypted passwords (BCrypt)
 - **Security**: CORS configuration and JWT token validation
+- **Email Service**: Resend API integration for transactional emails
+- **Token Management**: Secure token generation with expiration handling
 
 **Files:**
 - `SecurityConfig.java` - Security configuration
 - `JwtAuthenticationFilter.java` - JWT validation
 - `AuthController.java` - Login/register endpoints
+- `EmailService.java` - Email service with Resend API
+- `EmailConfirmationService.java` - Email confirmation logic
+- `PasswordResetService.java` - Password reset functionality
 - `auth-context.tsx` - Frontend authentication state
+- `confirm-email/page.tsx` - Email confirmation page
+- `reset-password/page.tsx` - Password reset page
 
 ### 2. AI-Powered Flashcard Generation
-**Implementation**: Anthropic Claude API integration for content analysis
+**Implementation**: Google Gemini API integration for content analysis
 
 **Features:**
 - Generate flashcards from uploaded files (PDF, TXT, DOCX)
@@ -33,13 +42,13 @@
 - Multiple flashcard formats and difficulty levels
 
 **Technical Details:**
-- **AI Service**: Claude API with custom prompts for flashcard generation
+- **AI Service**: Gemini API with custom prompts for flashcard generation
 - **File Processing**: MultipartFile handling with content extraction
 - **Content Analysis**: Semantic analysis to identify key concepts
 - **Batch Processing**: Efficient generation of multiple flashcards
 
 **Files:**
-- `ClaudeService.java` - AI integration service
+- `GeminiService.java` - AI integration service
 - `DeckController.java` - File upload and text processing endpoints
 - `upload/page.tsx` - Frontend upload interface
 
@@ -66,7 +75,7 @@ Content to analyze: [user content]
 
 **Technical Details:**
 - **Study Flow**: Sequential card presentation with progress tracking
-- **AI Grading**: Semantic similarity analysis using Claude
+- **AI Grading**: Semantic similarity analysis using Gemini
 - **Scoring**: 0.0-1.0 scale with confidence metrics
 - **Feedback**: Contextual explanations for learning improvement
 
@@ -79,7 +88,7 @@ Content to analyze: [user content]
 ```java
 public GradingResult gradeAnswer(String question, String correctAnswer, String userAnswer) {
     String prompt = createGradingPrompt(question, correctAnswer, userAnswer);
-    String response = callClaudeAPI(prompt);
+    String response = callGeminiAPI(prompt);
     return parseGradingResponse(response);
 }
 ```
@@ -196,13 +205,38 @@ public Card.Difficulty calculateNewDifficulty(Card card, double score, int sessi
 - `StudySession.java` - Session tracking entity
 - `StudySessionRepository.java` - Data access layer
 
+### 8. Email System (Production Ready)
+**Implementation**: Comprehensive email functionality with Resend API
+
+**Features:**
+- Email confirmation for new registrations
+- Password reset via secure email links
+- HTML email templates with proper styling
+- Secure token generation with expiration
+- Rate limiting on email endpoints
+- Async email sending for performance
+
+**Technical Details:**
+- **Email Service**: Resend API integration with WebClient
+- **Token Management**: Secure token generation with Base64 encoding
+- **Database**: Email confirmation and password reset token entities
+- **Security**: Rate limiting and token expiration
+- **Templates**: HTML email templates with proper branding
+
+**Files:**
+- `EmailService.java` - Resend API integration
+- `EmailConfirmationService.java` - Email confirmation workflow
+- `PasswordResetService.java` - Password reset functionality
+- `EmailConfirmationToken.java` - Email confirmation token entity
+- `PasswordResetToken.java` - Password reset token entity
+
 ## 🔧 Technical Implementation Details
 
 ### Backend Architecture (Spring Boot)
 
 **Core Services:**
 - **StudyService**: Manages study sessions, progress tracking, and AI integration
-- **ClaudeService**: Handles AI API communication for generation and grading
+- **GeminiService**: Handles AI API communication for generation and grading
 - **SpacedRepetitionService**: Implements learning algorithms
 - **UserService**: Manages user accounts and authentication
 
@@ -240,7 +274,7 @@ public Card.Difficulty calculateNewDifficulty(Card card, double score, int sessi
 
 ### AI Integration Architecture
 
-**Claude API Integration:**
+**Gemini API Integration:
 - **Prompt Engineering**: Optimized prompts for flashcard generation
 - **Response Parsing**: JSON parsing with error handling
 - **Rate Limiting**: Efficient API usage and request batching
@@ -261,6 +295,7 @@ CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
+    email_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -304,6 +339,26 @@ CREATE TABLE study_progress (
     cards_completed INTEGER DEFAULT 0,
     is_completed BOOLEAN DEFAULT FALSE,
     last_studied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Email confirmation tokens table
+CREATE TABLE email_confirmation_tokens (
+    id BIGSERIAL PRIMARY KEY,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    user_id BIGINT REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN DEFAULT FALSE
+);
+
+-- Password reset tokens table
+CREATE TABLE password_reset_tokens (
+    id BIGSERIAL PRIMARY KEY,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    user_id BIGINT REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN DEFAULT FALSE
 );
 ```
 

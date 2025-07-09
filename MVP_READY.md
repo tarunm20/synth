@@ -25,6 +25,7 @@ Your flashcard application is now **production-ready** for MVP launch! Here's wh
    - Secure token-based password reset
    - Rate-limited endpoints
    - Proper token expiration and cleanup
+   - Email confirmation system with secure tokens
 
 ### 🏗️ Production Infrastructure (COMPLETED)
 
@@ -98,6 +99,7 @@ Your flashcard application is now **production-ready** for MVP launch! Here's wh
 - ✅ Progress tracking and resume functionality
 - ✅ Dashboard with mastery scores
 - ✅ Password reset functionality
+- ✅ Email confirmation system with Resend integration
 
 ### Production Features:
 - ✅ Secure authentication with rate limiting
@@ -111,10 +113,13 @@ Your flashcard application is now **production-ready** for MVP launch! Here's wh
 ### 1. Environment Setup
 ```bash
 # Create production .env file
-CLAUDE_API_KEY=your_actual_claude_api_key
+GEMINI_API_KEY=your_actual_gemini_api_key
 JWT_SECRET=your_32_character_secret_key
 DB_PASSWORD=secure_database_password
 CORS_ALLOWED_ORIGINS=https://yourdomain.com
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=noreply@yourdomain.com
+FRONTEND_URL=https://yourdomain.com
 ```
 
 ### 2. Deploy Application
@@ -170,11 +175,12 @@ Your MVP is **production-ready**! The application includes:
 
 ## 🚨 Critical Next Steps
 
-1. **Get your Claude API key** from Anthropic
+1. **Get your Gemini API key** from Google AI Studio
 2. **Generate a secure JWT secret** (32+ characters)
-3. **Set up your domain and SSL certificate**
-4. **Deploy using the provided Docker configuration**
-5. **Test all functionality** before announcing launch
+3. **Set up your Resend API key** from Resend.com
+4. **Set up your domain and SSL certificate**
+5. **Deploy using the provided Docker configuration**
+6. **Test all functionality** before announcing launch
 
 ## 📞 Launch Support
 

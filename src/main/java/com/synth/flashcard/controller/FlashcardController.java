@@ -1,10 +1,14 @@
 package com.synth.flashcard.controller;
 
+import com.synth.flashcard.dto.CreateDeckRequest;
 import com.synth.flashcard.dto.DeckStatsDto;
 import com.synth.flashcard.entity.Deck;
 import com.synth.flashcard.entity.User;
 import com.synth.flashcard.service.FlashcardService;
 import com.synth.flashcard.service.SubscriptionService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,8 +29,8 @@ public class FlashcardController {
     @PostMapping("/upload")
     public ResponseEntity<?> createDeckFromFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("name") String name,
-            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("name") @NotBlank @Size(min = 1, max = 100) String name,
+            @RequestParam(value = "description", required = false) @Size(max = 500) String description,
             Authentication auth) {
         try {
             System.out.println("=== FILE UPLOAD START ===");
@@ -91,19 +95,12 @@ public class FlashcardController {
 
     @PostMapping("/text")
     public ResponseEntity<?> createDeckFromText(
-            @RequestBody Map<String, String> request,
+            @Valid @RequestBody CreateDeckRequest request,
             Authentication auth) {
         try {
             User user = (User) auth.getPrincipal();
-            String name = request.get("name");
-            String description = request.get("description");
-            String content = request.get("content");
             
-            if (name == null || content == null) {
-                return ResponseEntity.badRequest().body("Name and content are required");
-            }
-            
-            Deck deck = flashcardService.createDeckFromText(user, name, description, content);
+            Deck deck = flashcardService.createDeckFromText(user, request.getName(), request.getDescription(), request.getContent());
             
             // Return a simple response to avoid JSON serialization issues
             Map<String, Object> response = Map.of(

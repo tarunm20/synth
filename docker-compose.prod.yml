@@ -81,6 +81,9 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SERVER_PORT: 8080
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL}
+      FRONTEND_URL: https://${DOMAIN}
     depends_on:
       postgres:
         condition: service_healthy

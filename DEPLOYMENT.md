@@ -9,7 +9,7 @@ This guide covers deploying the Synth flashcard application for production use.
 - Docker and Docker Compose
 - Domain name with DNS access
 - SSL certificate (Let's Encrypt recommended)
-- Claude API key from Anthropic
+- Gemini API key from Google AI Studio
 
 ## 📋 Quick Start
 
@@ -19,7 +19,7 @@ Create a `.env` file in the project root:
 
 ```bash
 # Backend Environment Variables
-CLAUDE_API_KEY=your_actual_claude_api_key_here
+GEMINI_API_KEY=your_actual_gemini_api_key_here
 JWT_SECRET=generate-a-strong-32-character-secret-key-here
 DB_PASSWORD=your_secure_database_password_here
 
@@ -35,6 +35,11 @@ DB_USERNAME=postgres
 # Redis Configuration
 REDIS_HOST=redis
 REDIS_PORT=6379
+
+# Email Configuration (Resend)
+RESEND_API_KEY=your_resend_api_key_here
+RESEND_FROM_EMAIL=noreply@yourdomain.com
+FRONTEND_URL=https://yourdomain.com
 
 # Application Configuration
 LOG_LEVEL=INFO

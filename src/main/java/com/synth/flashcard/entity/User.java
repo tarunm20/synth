@@ -41,6 +41,9 @@ public class User implements UserDetails {
     @Column(name = "subscription_tier")
     private SubscriptionTier subscriptionTier = SubscriptionTier.FREE;
     
+    @Column(name = "email_verified")
+    private boolean emailVerified = false;
+    
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Deck> decks;
@@ -147,5 +150,13 @@ public class User implements UserDetails {
     
     public void setSubscriptionTier(SubscriptionTier subscriptionTier) {
         this.subscriptionTier = subscriptionTier;
+    }
+    
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+    
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 }

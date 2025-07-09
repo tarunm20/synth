@@ -54,6 +54,10 @@ export default function HomePage() {
         : await register(formData.email, formData.password)
 
       if (success) {
+        if (!isLogin) {
+          // Store email for potential resend confirmation
+          localStorage.setItem('lastRegisteredEmail', formData.email)
+        }
         router.push('/dashboard')
       } else {
         setError(isLogin ? 'Invalid email or password' : 'Registration failed')
@@ -537,17 +541,33 @@ export default function HomePage() {
                 {isLogin ? 'Sign In' : 'Create Account'}
               </button>
               
-              <button
-                type="button"
-                onClick={() => {
-                  setIsLogin(!isLogin)
-                  setError('')
-                }}
-                className="w-full text-blue-600 py-2 font-medium hover:text-blue-700 transition-colors"
-                disabled={submitting}
-              >
-                {isLogin ? 'Need an account? Sign up' : 'Already have an account? Sign in'}
-              </button>
+              <div className="flex flex-col space-y-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLogin(!isLogin)
+                    setError('')
+                  }}
+                  className="w-full text-blue-600 py-2 font-medium hover:text-blue-700 transition-colors"
+                  disabled={submitting}
+                >
+                  {isLogin ? 'Need an account? Sign up' : 'Already have an account? Sign in'}
+                </button>
+                
+                {isLogin && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAuthModal(false)
+                      router.push('/forgot-password')
+                    }}
+                    className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                    disabled={submitting}
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
             </form>
           </div>
         </div>

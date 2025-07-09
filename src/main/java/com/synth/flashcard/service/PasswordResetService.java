@@ -32,6 +32,9 @@ public class PasswordResetService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
+    @Autowired
+    private EmailService emailService;
+    
     private final SecureRandom secureRandom = new SecureRandom();
     
     public String createPasswordResetToken(String email) {
@@ -58,8 +61,15 @@ public class PasswordResetService {
         
         logger.info("Password reset token created for user: {}", email);
         
-        // In a real implementation, you would send an email here
-        // For MVP, we'll log the token (remove in production!)
+        // Send password reset email
+        try {
+            emailService.sendPasswordResetEmail(email, token);
+            logger.info("Password reset email sent successfully to: {}", email);
+        } catch (Exception e) {
+            logger.error("Failed to send password reset email to: {}, error: {}", email, e.getMessage());
+        }
+        
+        // For debugging only (remove in production!)
         if (logger.isDebugEnabled()) {
             logger.debug("Password reset token (DEBUG ONLY): {}", token);
         }

@@ -1,6 +1,6 @@
 # 🧠 Synth - AI-Powered Flashcard Generator
 
-A production-ready web application that automatically generates flashcards from uploaded documents using Claude AI, featuring intelligent study modes, progress tracking, and spaced repetition for effective learning.
+A production-ready web application that automatically generates flashcards from uploaded documents using Gemini AI, featuring intelligent study modes, progress tracking, and spaced repetition for effective learning.
 
 ## ✨ Key Features
 
@@ -8,26 +8,32 @@ A production-ready web application that automatically generates flashcards from 
 📚 **Smart Study Mode** - Answer-first flow with AI grading and feedback  
 📊 **Progress Tracking** - Resume sessions and track mastery scores  
 🔒 **Secure Authentication** - JWT-based user management with password reset  
-⚡ **Production Ready** - Docker deployment with health monitoring  
-🎯 **Rate Limited** - Protected APIs with Redis-based rate limiting
+📧 **Email System** - Complete email functionality with Resend integration  
+🛡️ **Security Hardened** - Input validation, rate limiting, and secure tokens  
+⚡ **Production Ready** - Railway deployment with health monitoring  
+🔐 **Password Reset** - Secure token-based password reset via email
 
 ## Features
 
 ### Core Functionality
 - **File Upload**: Support for PDF and text files
-- **AI Generation**: Automatic flashcard creation using Claude API
+- **AI Generation**: Automatic flashcard creation using Gemini API
 - **Smart Study**: Spaced repetition algorithm for optimal learning
 - **AI Grading**: Semantic similarity-based answer evaluation
 - **User Management**: Secure authentication with JWT
+- **Email System**: Password reset and email confirmation
 - **Progress Tracking**: Analytics and study session history
+- **Security**: Input validation, rate limiting, and secure tokens
 
 ### Technical Highlights
 - **Backend**: Spring Boot 3.x with PostgreSQL
 - **Frontend**: Next.js 14 with TypeScript and Tailwind CSS
 - **Security**: JWT authentication with Spring Security
-- **AI Integration**: Anthropic Claude API for content generation and grading
+- **Email Service**: Resend integration for transactional emails
+- **AI Integration**: Google Gemini API for content generation and grading
 - **Containerization**: Docker and Docker Compose ready
 - **Database**: PostgreSQL with JPA/Hibernate
+- **Deployment**: Railway-ready with production configuration
 
 ## Tech Stack
 
@@ -35,9 +41,11 @@ A production-ready web application that automatically generates flashcards from 
 - Spring Boot 3.2.0
 - Spring Security
 - Spring Data JPA
+- Spring WebFlux (for email service)
 - PostgreSQL
 - Apache PDFBox
 - JWT (jjwt)
+- Resend API integration
 - Maven
 
 ### Frontend
@@ -67,7 +75,7 @@ A production-ready web application that automatically generates flashcards from 
 
 ### Prerequisites
 - Docker & Docker Compose
-- Claude API key from [Anthropic](https://console.anthropic.com/)
+- Gemini API key from [Google AI Studio](https://aistudio.google.com/)
 
 ### 1. Clone and Setup
 ```bash
@@ -86,7 +94,7 @@ cp .env.template .env
 cp .env.example .env
 
 # Edit .env with your configuration
-# - Set CLAUDE_API_KEY to your Anthropic API key
+# - Set GEMINI_API_KEY to your Gemini API key
 # - Configure database connection
 # - Set JWT_SECRET to a secure random string
 
@@ -130,7 +138,7 @@ createdb flashcards
 cp .env.example .env
 
 # Set your environment variables in .env
-export CLAUDE_API_KEY=your-api-key-here
+export GEMINI_API_KEY=your-api-key-here
 
 # Start all services
 docker-compose up --build
@@ -160,7 +168,10 @@ DATABASE_URL=jdbc:postgresql://localhost:5432/flashcards
 DATABASE_USERNAME=postgres
 DATABASE_PASSWORD=password
 JWT_SECRET=your-super-secret-jwt-key-here
-CLAUDE_API_KEY=your-claude-api-key-here
+GEMINI_API_KEY=your-gemini-api-key-here
+RESEND_API_KEY=your-resend-api-key-here
+RESEND_FROM_EMAIL=noreply@yourdomain.com
+FRONTEND_URL=http://localhost:3000
 PORT=8080
 ```
 
@@ -172,8 +183,12 @@ NEXT_PUBLIC_API_URL=http://localhost:8080/api
 ## API Documentation
 
 ### Authentication Endpoints
-- `POST /api/auth/register` - User registration
+- `POST /api/auth/register` - User registration (sends email confirmation)
 - `POST /api/auth/login` - User login
+- `POST /api/auth/forgot-password` - Request password reset email
+- `POST /api/auth/reset-password` - Reset password with token
+- `POST /api/auth/confirm-email` - Confirm email with token
+- `POST /api/auth/resend-confirmation` - Resend email confirmation
 
 ### Deck Management
 - `GET /api/decks` - List user's decks
@@ -194,6 +209,8 @@ NEXT_PUBLIC_API_URL=http://localhost:8080/api
 - `id` (Primary Key)
 - `email` (Unique)
 - `password` (Encrypted)
+- `email_verified` (Boolean)
+- `subscription_tier` (Enum)
 - `created_at`
 
 ### Decks
@@ -218,6 +235,22 @@ NEXT_PUBLIC_API_URL=http://localhost:8080/api
 - `score`
 - `confidence`
 - `studied_at`
+
+### Email Confirmation Tokens
+- `id` (Primary Key)
+- `token` (Unique)
+- `user_id` (Foreign Key)
+- `created_at`
+- `expires_at`
+- `used` (Boolean)
+
+### Password Reset Tokens
+- `id` (Primary Key)
+- `token` (Unique)
+- `user_id` (Foreign Key)
+- `created_at`
+- `expires_at`
+- `used` (Boolean)
 
 ## Development
 
@@ -264,7 +297,7 @@ npm run build
 heroku create your-app-name
 
 # Set environment variables
-heroku config:set CLAUDE_API_KEY=your-key
+heroku config:set GEMINI_API_KEY=your-key
 heroku config:set JWT_SECRET=your-secret
 
 # Add PostgreSQL addon
@@ -297,11 +330,15 @@ This project is licensed under the MIT License.
 ## Security Considerations
 
 - JWT tokens expire after 24 hours
-- Passwords are encrypted using BCrypt
+- Passwords are encrypted using BCrypt with strong password requirements
 - File uploads are limited to 10MB
-- Input validation on all endpoints
+- Input validation on all endpoints with custom validation annotations
 - CORS configured for security
 - SQL injection prevention with JPA
+- Rate limiting on authentication and email endpoints
+- Secure token generation for password reset and email confirmation
+- Email tokens expire after 1-24 hours depending on use case
+- Comprehensive error handling without information disclosure
 
 ## Support
 
